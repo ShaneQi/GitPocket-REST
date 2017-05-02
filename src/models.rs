@@ -1,3 +1,4 @@
+#[derive(Serialize, Deserialize)]
 pub struct Repo {
     pub owner: String,
     pub name: String,
@@ -5,6 +6,7 @@ pub struct Repo {
     pub tags: Vec<String>,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Host {
     pub name: String,
     pub url: String,
