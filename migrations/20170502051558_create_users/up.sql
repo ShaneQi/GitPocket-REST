@@ -1,4 +1,3 @@
--- Your SQL goes here
 CREATE TABLE `users` (
 	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	`github_id`	TEXT UNIQUE
