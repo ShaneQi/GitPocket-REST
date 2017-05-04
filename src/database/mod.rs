@@ -20,13 +20,13 @@ impl Repo {
                 id: row.get(0),
                 owner: row.get(1),
                 name: row.get(2),
-                host: None,
-                tags: None,
             }
         }));
         let mut repos = Vec::new();
-        for repo in repo_rows {
-            repos.push(repo.unwrap());
+        for row in repo_rows {
+            if let Ok(repo) = row {
+                repos.push(repo);
+            }
         }
         Ok(repos)
     }
@@ -53,12 +53,12 @@ impl Tag {
         let connection = connection();
         let mut statement =
             try!(connection.prepare("SELECT tags.name FROM `tags` WHERE tags.repo_id = :1;"));
-        let tag_rows = statement
-            .query_map(&[&repo_id], |row| Tag { name: row.get(0) })
-            .unwrap();
+        let tag_rows = try!(statement.query_map(&[&repo_id], |row| Tag { name: row.get(0) }));
         let mut tags = Vec::new();
-        for tag in tag_rows {
-            tags.push(tag.unwrap());
+        for row in tag_rows {
+            if let Ok(tag) = row {
+                tags.push(tag);
+            }
         }
         Ok(tags)
     }
