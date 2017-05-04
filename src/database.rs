@@ -14,7 +14,7 @@ impl Repo {
     pub fn of_user(user_id: i32) -> Result<Vec<Repo>, Error> {
         let connection = connection();
         let mut statement =
-        try!(connection.prepare("SELECT `id`, `owner`, `name` FROM `repos` WHERE user_id = :1;"));
+        try!(connection.prepare("SELECT `id`, `owner`, `name` FROM `repos` WHERE `user_id` = :1;"));
         let repo_rows = try!(statement.query_map(&[&user_id], |row| {
             Repo {
                 id: row.get(0),
@@ -36,7 +36,7 @@ impl Host {
     pub fn of_repo(repo_id: i32) -> Result<Host, Error> {
         let connection = connection();
         let mut statement =
-        try!(connection.prepare("SELECT `hosts.id`, `hosts.name`, `hosts.url` FROM `hosts`, `repos` WHERE `hosts.id` = `repos.host_id AND `repos.id` = :1;"));
+        try!(connection.prepare("SELECT hosts.id, hosts.name, hosts.url FROM `hosts`, `repos` WHERE hosts.id = repos.host_id AND repos.id = :1;"));
         let row = try!(statement.query_row(&[&repo_id], |row| {
             Host {
                 id: row.get(0),
@@ -46,21 +46,20 @@ impl Host {
         }));
         Ok(row)
     }
+}
 
-    pub fn all() -> Result<Vec<Host>, Error> {
+impl Tag {
+    pub fn of_repo(repo_id: i32) -> Result<Vec<Tag>, Error> {
         let connection = connection();
-        let mut statement = try!(connection.prepare("SELECT `id`, `name`, `url` FROM `hosts`;"));
-        let rows = try!(statement.query_map(&[], |row| {
-            Host {
-                id: row.get(0),
-                name: row.get(1),
-                url: row.get(2),
-            }
-        }));
-        let mut hosts = Vec::new();
-        for host in rows {
-            hosts.push(host.unwrap());
+        let mut statement =
+            try!(connection.prepare("SELECT tags.name FROM `tags` WHERE tags.repo_id = :1;"));
+        let tag_rows = statement
+            .query_map(&[&repo_id], |row| Tag { name: row.get(0) })
+            .unwrap();
+        let mut tags = Vec::new();
+        for tag in tag_rows {
+            tags.push(tag.unwrap());
         }
-        Ok(hosts)
+        Ok(tags)
     }
 }
