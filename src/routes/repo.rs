@@ -12,7 +12,8 @@ pub fn get_user_repos(req: &mut Request) -> IronResult<Response> {
 
 pub fn post_user_repo(req: &mut Request) -> IronResult<Response> {
     post_resp(req, "user_id", |user_id, body_content| {
-        let repo = serde_json::from_str::<Repo>(body_content).unwrap();
-        repo.post(user_id)
+        serde_json::from_str::<Repo>(body_content)
+            .ok()
+            .and_then(|repo| repo.post(user_id).ok())
     })
 }

@@ -52,7 +52,7 @@ fn get_resp<F: FnOnce(i32) -> Result<T, E>, T, E>(req: &Request,
     }
 
 }
-fn post_resp<F: FnOnce(i32, &str) -> Result<T, E>, T, E>(req: &mut Request,
+fn post_resp<F: FnOnce(i32, &str) -> Option<T>, T>(req: &mut Request,
                                                    query_name: &str,
                                                    post: F)
                                                    -> IronResult<Response>
@@ -64,7 +64,7 @@ fn post_resp<F: FnOnce(i32, &str) -> Result<T, E>, T, E>(req: &mut Request,
               .get::<Router>()
               .and_then(|router| router.find(query_name))
               .and_then(|query| query.parse::<i32>().ok())
-              .and_then(|id| post(id, &body_content).ok())
+              .and_then(|id| post(id, &body_content))
               .and_then(|result| serde_json::to_string(&result).ok()) {
         Some(content) => resp(content),
         None => resp_err(),
