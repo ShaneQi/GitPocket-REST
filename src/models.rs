@@ -1,4 +1,4 @@
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Repo {
     pub id: Option<i32>,
     pub owner: String,
