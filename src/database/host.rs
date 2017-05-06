@@ -18,5 +18,33 @@ impl Host {
         }));
         Ok(row)
     }
-}
 
+    pub fn all() -> Result<Vec<Host>, Error> {
+        let connection = connection();
+        let mut statement = try!(connection.prepare("SELECT `id`, `name`, `url` FROM `hosts`;"));
+        let rows = try!(statement.query_map(&[], |row| {
+            Host {
+                id: row.get(0),
+                name: row.get(1),
+                url: row.get(2),
+            }
+        }));
+        let mut hosts = Vec::new();
+        for host in rows {
+            if let Ok(host) = host {
+                hosts.push(host);
+            }
+        }
+        Ok(hosts)
+    }
+
+    pub fn post(&mut self) -> Result<(), Error> {
+        let connection = connection();
+        let mut statement = try!(connection
+            .prepare("INSERT INTO `hosts` (name, url) VALUES (:1, :2);"));
+        try!(statement.execute(&[&self.name, &self.url]));
+        let host_id = connection.last_insert_rowid();
+        self.id = Some(host_id);
+        Ok(())
+    }
+}

@@ -18,4 +18,12 @@ impl Tag {
         }
         Ok(tags)
     }
+
+    pub fn post(&mut self, repo_id: i32) -> Result<(), Error> {
+        let connection = connection();
+        let mut statement = try!(
+            connection.prepare("INSERT INTO `tags` (name, repo_id) VALUES (:1, :2);"));
+        try!(statement.execute(&[&self.name, &repo_id]));
+        Ok(())
+    }
 }

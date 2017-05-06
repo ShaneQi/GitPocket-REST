@@ -1,18 +1,18 @@
 #[derive(Serialize, Deserialize)]
 pub struct Repo {
-    pub id: Option<i32>,
+    pub id: Option<i64>,
     pub owner: String,
     pub name: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Host {
-    pub id: Option<i32>,
+    pub id: Option<i64>,
     pub name: String,
     pub url: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Tag {
     pub name: String,
 }

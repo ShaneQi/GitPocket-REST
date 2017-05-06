@@ -25,20 +25,13 @@ impl Repo {
         Ok(repos)
     }
 
-    pub fn post(&self, user_id: i32) -> Result<Repo, Error> {
+    pub fn post(&mut self, user_id: i32) -> Result<(), Error> {
         let connection = connection();
         let mut statement = try!(connection
             .prepare("INSERT INTO `repos` (name, owner, user_id, host_id) VALUES (:1, :2, :3, 1);"));
         try!(statement.execute(&[&self.name, &self.owner, &user_id]));
         let repo_id = connection.last_insert_rowid();
-        let mut fetch_statement =
-            try!(connection.prepare("SELECT `name`, `owner` FROM `repos` WHERE repos.id = :1;"));
-        fetch_statement.query_row(&[&repo_id], |row| {
-            Repo {
-                id: Some(repo_id as i32),
-                name: row.get(0),
-                owner: row.get(1),
-            }
-        })
+        self.id = Some(repo_id);
+        Ok(())
     }
 }
