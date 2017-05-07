@@ -20,8 +20,8 @@ pub fn router() -> Router {
         get_user_repos: get "/v1/user/:user_id/repos" => repo::get_user_repos,
         post_user_repos: post "/v1/user/:user_id/repos" => repo::post_user_repo,
 
-        get_repo_host: get "/v1/repo/:repo_id/host" => host::get_repo_host,
         get_hosts: get "/v1/hosts" => host::get_hosts,
+        get_host: get "/v1/host/:host_id" => host::get_host,
         post_host: post "/v1/hosts" => host::post_host,
 
         get_repo_tags: get "/v1/repo/:repo_id/tags" => tag::get_repo_tags,

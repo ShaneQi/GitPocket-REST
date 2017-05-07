@@ -7,13 +7,13 @@ use super::get_resp;
 use super::get_static_resp;
 use super::post_static_resp;
 
-pub fn get_repo_host(req: &mut Request) -> IronResult<Response> {
-    get_resp(req, "repo_id", |repo_id| Host::of_repo(repo_id))
-}
-
 pub fn get_hosts(req: &mut Request) -> IronResult<Response> {
     let _ = req;
     get_static_resp(|| Host::all())
+}
+
+pub fn get_host(req: &mut Request) -> IronResult<Response> {
+    get_resp(req, "host_id", |host_id| Host::get(host_id))
 }
 
 pub fn post_host(req: &mut Request) -> IronResult<Response> {
