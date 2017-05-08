@@ -35,4 +35,12 @@ impl Repo {
         self.id = Some(repo_id);
         Ok(())
     }
+    
+    pub fn delete(repo_id: i64) {
+        let connection = connection();
+        let delete_repo_statement = connection.prepare("DELETE FROM `repos` WHERE id = :1;");
+        delete_repo_statement.and_then(|mut statm| statm.execute(&[&repo_id])).unwrap();
+        let delte_tags_statement = connection.prepare("DELETE FROM `tags` WHERE repo_id = :1;");
+        delte_tags_statement.and_then(|mut statm| statm.execute(&[&repo_id])).unwrap();
+    }
 }

@@ -19,6 +19,7 @@ pub fn router() -> Router {
     router!{
         get_user_repos: get "/v1/user/:user_id/repos" => repo::get_user_repos,
         post_user_repos: post "/v1/user/:user_id/repos" => repo::post_user_repo,
+        delete_repo: delete "v1/repo/:repo_id" => repo::delete_repo,
 
         get_hosts: get "/v1/hosts" => host::get_hosts,
         get_host: get "/v1/host/:host_id" => host::get_host,
@@ -100,4 +101,15 @@ fn post_static_resp<F: FnOnce(&str) -> Option<T>, T>(req: &mut Request,
         Some(content) => resp(content),
         None => resp_err(),
     }
+}
+
+fn delete_resp<F: FnOnce(i64)>(req: &Request, query_name: &str, handle: F) -> IronResult<Response> {
+    match req.extensions
+              .get::<Router>()
+              .and_then(|router| router.find(query_name))
+              .and_then(|query| query.parse::<i64>().ok()) {
+        Some(id) => handle(id),
+        _ => {}
+    }
+    resp("".to_string())
 }
