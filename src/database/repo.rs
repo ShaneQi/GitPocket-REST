@@ -5,7 +5,7 @@ use super::connection;
 use models::*;
 
 impl Repo {
-    pub fn of_user(user_id: i32) -> Result<Vec<Repo>, Error> {
+    pub fn of_user(user_id: i64) -> Result<Vec<Repo>, Error> {
         let connection = connection();
         let mut statement =
         try!(connection.prepare("SELECT `id`, `owner`, `name`, `host_id` FROM `repos` WHERE `user_id` = :1;"));
@@ -26,7 +26,7 @@ impl Repo {
         Ok(repos)
     }
 
-    pub fn post(&mut self, user_id: i32) -> Result<(), Error> {
+    pub fn post(&mut self, user_id: i64) -> Result<(), Error> {
         let connection = connection();
         let mut statement = try!(connection
             .prepare("INSERT INTO `repos` (name, owner, user_id, host_id) VALUES (:1, :2, :3, :4);"));

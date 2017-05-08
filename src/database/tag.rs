@@ -5,7 +5,7 @@ use super::connection;
 use models::*;
 
 impl Tag {
-    pub fn of_repo(repo_id: i32) -> Result<Vec<Tag>, Error> {
+    pub fn of_repo(repo_id: i64) -> Result<Vec<Tag>, Error> {
         let connection = connection();
         let mut statement =
             try!(connection.prepare("SELECT tags.name FROM `tags` WHERE tags.repo_id = :1;"));
@@ -19,7 +19,7 @@ impl Tag {
         Ok(tags)
     }
 
-    pub fn post(&mut self, repo_id: i32) -> Result<(), Error> {
+    pub fn post(&mut self, repo_id: i64) -> Result<(), Error> {
         let connection = connection();
         let mut statement = try!(
             connection.prepare("INSERT INTO `tags` (name, repo_id) VALUES (:1, :2);"));

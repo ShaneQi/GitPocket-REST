@@ -40,7 +40,7 @@ fn resp_err() -> IronResult<Response> {
     Ok(Response::with(status::InternalServerError))
 }
 
-fn get_resp<F: FnOnce(i32) -> Result<T, E>, T, E>(req: &Request,
+fn get_resp<F: FnOnce(i64) -> Result<T, E>, T, E>(req: &Request,
                                                   query_name: &str,
                                                   get: F)
                                                   -> IronResult<Response>
@@ -49,7 +49,7 @@ fn get_resp<F: FnOnce(i32) -> Result<T, E>, T, E>(req: &Request,
     match req.extensions
               .get::<Router>()
               .and_then(|router| router.find(query_name))
-              .and_then(|query| query.parse::<i32>().ok())
+              .and_then(|query| query.parse::<i64>().ok())
               .and_then(|id| get(id).ok())
               .and_then(|result| serde_json::to_string(&result).ok()) {
         Some(content) => resp(content),
@@ -61,14 +61,16 @@ fn get_resp<F: FnOnce(i32) -> Result<T, E>, T, E>(req: &Request,
 fn get_static_resp<F: FnOnce() -> Result<T, E>, T, E>(get: F) -> IronResult<Response>
     where T: Serialize
 {
-    match get().ok().and_then(|result| serde_json::to_string(&result).ok()) {
+    match get()
+              .ok()
+              .and_then(|result| serde_json::to_string(&result).ok()) {
         Some(content) => resp(content),
         None => resp_err(),
     }
 
 }
 
-fn post_resp<F: FnOnce(i32, &str) -> Option<T>, T>(req: &mut Request,
+fn post_resp<F: FnOnce(i64, &str) -> Option<T>, T>(req: &mut Request,
                                                    query_name: &str,
                                                    post: F)
                                                    -> IronResult<Response>
@@ -79,7 +81,7 @@ fn post_resp<F: FnOnce(i32, &str) -> Option<T>, T>(req: &mut Request,
     match req.extensions
               .get::<Router>()
               .and_then(|router| router.find(query_name))
-              .and_then(|query| query.parse::<i32>().ok())
+              .and_then(|query| query.parse::<i64>().ok())
               .and_then(|id| post(id, &body_content))
               .and_then(|result| serde_json::to_string(&result).ok()) {
         Some(content) => resp(content),

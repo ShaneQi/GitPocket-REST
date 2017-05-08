@@ -5,7 +5,7 @@ use super::connection;
 use models::*;
 
 impl Host {
-    pub fn get(host_id: i32) -> Result<Host, Error> {
+    pub fn get(host_id: i64) -> Result<Host, Error> {
         let connection = connection();
         let mut statement =
         try!(connection.prepare("SELECT id, name, url FROM `hosts` WHERE hosts.id = :1;"));
