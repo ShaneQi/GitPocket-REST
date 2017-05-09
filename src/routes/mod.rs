@@ -18,7 +18,7 @@ mod tag;
 pub fn router() -> Router {
     router!{
         get_user_repos: get "/v1/user/:user_id/repos" => repo::get_user_repos,
-        post_user_repos: post "/v1/user/:user_id/repos" => repo::post_user_repo,
+        post_user_repo: post "/v1/user/:user_id/repos" => repo::post_user_repo,
         delete_repo: delete "v1/repo/:repo_id" => repo::delete_repo,
 
         get_hosts: get "/v1/hosts" => host::get_hosts,
@@ -27,6 +27,7 @@ pub fn router() -> Router {
 
         get_repo_tags: get "/v1/repo/:repo_id/tags" => tag::get_repo_tags,
         post_repo_tag: post "/v1/repo/:repo_id/tags" => tag::post_repo_tag,
+        delete_repo_tag: delete "v1/repo/:repo_id/tag/:tag_name" => tag::delete_repo_tag,
     }
 }
 
@@ -111,5 +112,17 @@ fn delete_resp<F: FnOnce(i64)>(req: &Request, query_name: &str, handle: F) -> Ir
         Some(id) => handle(id),
         _ => {}
     }
+    resp("".to_string())
+}
+
+fn delete_repo_tag_resp<F: FnOnce(i64, &str)>(req: &Request, handle: F) -> IronResult<Response> {
+    let repo_id = req.extensions
+        .get::<Router>()
+        .and_then(|router| router.find("repo_id"))
+        .and_then(|query| query.parse::<i64>().ok()).unwrap();
+    let tag_name = req.extensions
+        .get::<Router>()
+        .and_then(|router| router.find("tag_name")).unwrap();
+    handle(repo_id, tag_name);
     resp("".to_string())
 }

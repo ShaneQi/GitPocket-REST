@@ -26,4 +26,11 @@ impl Tag {
         try!(statement.execute(&[&self.name, &repo_id]));
         Ok(())
     }
+
+    pub fn delete(repo_id: i64, tag_name: &str){
+        let connection = connection();
+        let mut statement = 
+            connection.prepare("DELETE FROM `tags` WHERE repo_id = :1 AND name = :2;").unwrap();
+        statement.execute(&[&repo_id, &tag_name.to_string()]).unwrap();
+    }
 }
