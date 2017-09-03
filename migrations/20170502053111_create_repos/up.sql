@@ -1,0 +1,9 @@
+CREATE TABLE `repos` (
+	`id`		INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`owner`		TEXT NOT NULL,
+	`name`		TEXT NOT NULL,
+	`user_id`	INTEGER NOT NULL,
+	`host_id`	INTEGER NOT NULL
+);
+
+INSERT INTO `repos` VALUES (1, 'shaneqi', 'ZEGBot', 1, 1);
